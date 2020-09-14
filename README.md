@@ -23,6 +23,11 @@ const SESSION_ID = ''; // Add the session ID.
 const TOKEN = '';     // Add the token.
 ```
 
+## Installation
+
+1. run `npm install` on the project directory
+2. 
+
 ## Run
 
 ### Android

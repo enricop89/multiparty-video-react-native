@@ -308,7 +308,7 @@ class App extends Component {
 
   joinVideoCall = () => {
     return (
-      <View style={styles.fullView}>
+      <SafeAreaView style={styles.fullView}>
         <Button
           onPress={this.joinCall}
           title="JoinCall"
@@ -316,7 +316,7 @@ class App extends Component {
           accessibilityLabel="Join call">
           Join Call
         </Button>
-      </View>
+      </SafeAreaView>
     );
   };
 
