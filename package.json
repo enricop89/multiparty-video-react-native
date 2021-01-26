@@ -10,9 +10,9 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "opentok-react-native": "git+https://github.com/enricop89/opentok-react-native.git#add-preferred-res-framerate",
+    "opentok-react-native": "git+https://github.com/opentok/opentok-react-native.git#0.15.0",
     "react": "16.13.1",
-    "react-native": "0.63.2",
+    "react-native": "^0.63.2",
     "react-native-vector-icons": "^7.0.0"
   },
   "devDependencies": {
