@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -17,7 +17,7 @@ import {
   OTSubscriberView,
 } from 'opentok-react-native';
 
-import * as credentials from './config'
+import * as credentials from './config';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -26,8 +26,8 @@ const dimensions = {
   height: Dimensions.get('window').height,
 };
 
-const mainSubscribersResolution = { width: 1280, height: 720 };
-const secondarySubscribersResolution = { width: 352, height: 288 };
+const mainSubscribersResolution = {width: 1280, height: 720};
+const secondarySubscribersResolution = {width: 352, height: 288};
 
 class App extends Component {
   constructor(props) {
@@ -41,7 +41,7 @@ class App extends Component {
       localPublishVideo: true, // Local Video state
       joinCall: false, // State variable for storing success
       streamProperties: {}, // Handle individual stream properties,
-      mainSubscriberStreamId: null
+      mainSubscriberStreamId: null,
     };
 
     this.sessionEventHandlers = {
@@ -57,22 +57,22 @@ class App extends Component {
           streamProperties,
           subscriberIds: [...this.state.subscriberIds, event.streamId],
         });
-        console.log("streamCreated", this.state)
+        console.log('streamCreated', this.state);
       },
       streamDestroyed: (event) => {
         const indexToRemove = this.state.subscriberIds.indexOf(event.streamId);
         const newSubscriberIds = this.state.subscriberIds;
-        const streamProperties = { ...this.state.streamProperties };
+        const streamProperties = {...this.state.streamProperties};
         if (indexToRemove !== -1) {
           delete streamProperties[event.streamId];
           newSubscriberIds.splice(indexToRemove, 1);
-          this.setState({ subscriberIds: newSubscriberIds });
+          this.setState({subscriberIds: newSubscriberIds});
         }
       },
-      error: error => {
+      error: (error) => {
         console.log('session error:', error);
       },
-      otrnError: error => {
+      otrnError: (error) => {
         console.log('Session otrnError error:', error);
       },
       sessionDisconnected: () => {
@@ -90,6 +90,9 @@ class App extends Component {
       streamDestroyed: (event) => {
         console.log('Publisher stream destroyed!', event);
       },
+      audioLevel: (event) => {
+        /* console.log('AudioLevel', typeof event); */
+      },
     };
 
     this.subscriberEventHandlers = {
@@ -99,10 +102,10 @@ class App extends Component {
       disconnected: () => {
         console.log('[subscriberEventHandlers - disconnected]');
       },
-      error: error => {
+      error: (error) => {
         console.log('subscriberEventHandlers error:', error);
       },
-    }
+    };
 
     this.publisherProperties = {
       cameraPosition: 'front',
@@ -111,7 +114,10 @@ class App extends Component {
 
   toggleAudio = () => {
     let publishAudio = this.state.localPublishAudio;
-    this.publisherProperties = { ...this.publisherProperties, publishAudio: !publishAudio };
+    this.publisherProperties = {
+      ...this.publisherProperties,
+      publishAudio: !publishAudio,
+    };
     this.setState({
       localPublishAudio: !publishAudio,
     });
@@ -119,7 +125,10 @@ class App extends Component {
 
   toggleVideo = () => {
     let publishVideo = this.state.localPublishVideo;
-    this.publisherProperties = { ...this.publisherProperties, publishVideo: !publishVideo };
+    this.publisherProperties = {
+      ...this.publisherProperties,
+      publishVideo: !publishVideo,
+    };
     this.setState({
       localPublishVideo: !publishVideo,
     });
@@ -127,91 +136,121 @@ class App extends Component {
   };
 
   joinCall = () => {
-    const { joinCall } = this.state;
+    const {joinCall} = this.state;
     if (!joinCall) {
-      this.setState({ joinCall: true });
+      this.setState({joinCall: true});
     }
   };
 
   endCall = () => {
-    const { joinCall } = this.state;
+    const {joinCall} = this.state;
     if (joinCall) {
-      this.setState({ joinCall: !joinCall });
+      this.setState({joinCall: !joinCall});
     }
   };
 
   /**
    * // todo check if the selected is a publisher. if so, return
-   * @param {*} subscribers 
+   * @param {*} subscribers
    */
   handleSubscriberSelection = (subscribers, streamId) => {
-    console.log("handleSubscriberSelection", streamId);
+    console.log('handleSubscriberSelection', streamId);
     let subscriberToSwap = subscribers.indexOf(streamId);
     let currentSubscribers = subscribers;
     let temp = currentSubscribers[subscriberToSwap];
     currentSubscribers[subscriberToSwap] = currentSubscribers[0];
     currentSubscribers[0] = temp;
-    this.setState(prevState => {
-      const newStreamProps = { ...prevState.streamProperties };
+    this.setState((prevState) => {
+      const newStreamProps = {...prevState.streamProperties};
       for (let i = 0; i < currentSubscribers.length; i += 1) {
         if (i === 0) {
-          newStreamProps[currentSubscribers[i]] = { ...prevState.streamProperties[currentSubscribers[i]] }
-          newStreamProps[currentSubscribers[i]].preferredResolution = mainSubscribersResolution;
+          newStreamProps[currentSubscribers[i]] = {
+            ...prevState.streamProperties[currentSubscribers[i]],
+          };
+          newStreamProps[
+            currentSubscribers[i]
+          ].preferredResolution = mainSubscribersResolution;
         } else {
-          newStreamProps[currentSubscribers[i]] = { ...prevState.streamProperties[currentSubscribers[i]] }
-          newStreamProps[currentSubscribers[i]].preferredResolution = secondarySubscribersResolution;
+          newStreamProps[currentSubscribers[i]] = {
+            ...prevState.streamProperties[currentSubscribers[i]],
+          };
+          newStreamProps[
+            currentSubscribers[i]
+          ].preferredResolution = secondarySubscribersResolution;
         }
       }
-      console.log("mainSubscriberStreamId", streamId);
-      console.log("streamProperties#2", newStreamProps);
-      return { mainSubscriberStreamId: streamId, streamProperties: newStreamProps };
-    })
-  }
+      console.log('mainSubscriberStreamId', streamId);
+      console.log('streamProperties#2', newStreamProps);
+      return {
+        mainSubscriberStreamId: streamId,
+        streamProperties: newStreamProps,
+      };
+    });
+  };
 
   handleScrollEnd = (event, subscribers) => {
-    console.log("handleScrollEnd", event.nativeEvent) // event.nativeEvent.contentOffset.x 
-    console.log("handleScrollEnd - events", event.target) // event.nativeEvent.contentOffset.x 
+    console.log('handleScrollEnd', event.nativeEvent); // event.nativeEvent.contentOffset.x
+    console.log('handleScrollEnd - events', event.target); // event.nativeEvent.contentOffset.x
     let firstVisibleIndex;
-    if (event && event.nativeEvent && !isNaN(event.nativeEvent.contentOffset.x)) {
-      firstVisibleIndex = parseInt(event.nativeEvent.contentOffset.x / (dimensions.width / 2), 10);
-      console.log("firstVisibleIndex", firstVisibleIndex);
+    if (
+      event &&
+      event.nativeEvent &&
+      !isNaN(event.nativeEvent.contentOffset.x)
+    ) {
+      firstVisibleIndex = parseInt(
+        event.nativeEvent.contentOffset.x / (dimensions.width / 2),
+        10,
+      );
+      console.log('firstVisibleIndex', firstVisibleIndex);
     }
-    this.setState(prevState => {
-      const newStreamProps = { ...prevState.streamProperties };
+    this.setState((prevState) => {
+      const newStreamProps = {...prevState.streamProperties};
       if (firstVisibleIndex !== undefined && !isNaN(firstVisibleIndex)) {
         for (let i = 0; i < subscribers.length; i += 1) {
-          if (i === firstVisibleIndex || i === (firstVisibleIndex + 1)) {
-            newStreamProps[subscribers[i]] = { ...prevState.streamProperties[subscribers[i]] }
+          if (i === firstVisibleIndex || i === firstVisibleIndex + 1) {
+            newStreamProps[subscribers[i]] = {
+              ...prevState.streamProperties[subscribers[i]],
+            };
             newStreamProps[subscribers[i]].subscribeToVideo = true;
           } else {
-            newStreamProps[subscribers[i]] = { ...prevState.streamProperties[subscribers[i]] }
+            newStreamProps[subscribers[i]] = {
+              ...prevState.streamProperties[subscribers[i]],
+            };
             newStreamProps[subscribers[i]].subscribeToVideo = false;
           }
         }
       }
-      return { streamProperties: newStreamProps }
-    })
-  }
+      return {streamProperties: newStreamProps};
+    });
+  };
 
   renderSubscribers = (subscribers) => {
-    console.log("renderSubscribers", subscribers);
-    console.log("this.state.subscriberIds", this.state.subscriberIds);
-    console.log("this.state.mainSubscriberStreamId", this.state.mainSubscriberStreamId);
+    console.log('renderSubscribers', subscribers);
+    console.log('this.state.subscriberIds', this.state.subscriberIds);
+    console.log(
+      'this.state.mainSubscriberStreamId',
+      this.state.mainSubscriberStreamId,
+    );
     if (this.state.mainSubscriberStreamId) {
-      subscribers = subscribers.filter(sub => sub !== this.state.mainSubscriberStreamId);
+      subscribers = subscribers.filter(
+        (sub) => sub !== this.state.mainSubscriberStreamId,
+      );
       subscribers.unshift(this.state.mainSubscriberStreamId);
     }
-    console.log("renderSubscribers - sorted", subscribers);
+    console.log('renderSubscribers - sorted', subscribers);
     return subscribers.length > 1 ? (
       <>
         <View style={styles.mainSubscriberStyle}>
           <TouchableOpacity
-            onPress={() => this.handleSubscriberSelection(subscribers, subscribers[0])}
+            onPress={() =>
+              this.handleSubscriberSelection(subscribers, subscribers[0])
+            }
             key={subscribers[0]}>
             <OTSubscriberView
               streamId={subscribers[0]}
               style={{
-                width: '100%', height: '100%'
+                width: '100%',
+                height: '100%',
               }}
             />
           </TouchableOpacity>
@@ -223,23 +262,27 @@ class App extends Component {
             decelerationRate={0}
             snapToInterval={dimensions.width / 2}
             snapToAlignment={'center'}
-            onScrollEndDrag={(e) => this.handleScrollEnd(e, subscribers.slice(1))}
+            onScrollEndDrag={(e) =>
+              this.handleScrollEnd(e, subscribers.slice(1))
+            }
             style={{
               width: dimensions.width,
               height: dimensions.height / 4,
             }}>
             {subscribers.slice(1).map((streamId) => (
               <TouchableOpacity
-                onPress={() => this.handleSubscriberSelection(subscribers, streamId)}
+                onPress={() =>
+                  this.handleSubscriberSelection(subscribers, streamId)
+                }
                 style={{
                   width: dimensions.width / 2,
                   height: dimensions.height / 4,
                 }}
-                key={streamId}
-              >
+                key={streamId}>
                 <OTSubscriberView
                   style={{
-                    width: '100%', height: '100%'
+                    width: '100%',
+                    height: '100%',
                   }}
                   key={streamId}
                   streamId={streamId}
@@ -251,12 +294,15 @@ class App extends Component {
       </>
     ) : subscribers.length > 0 ? (
       <TouchableOpacity style={styles.fullView}>
-        <OTSubscriberView streamId={subscribers[0]}
+        <OTSubscriberView
+          streamId={subscribers[0]}
           key={subscribers[0]}
-          style={{ width: '100%', height: '100%' }}
+          style={{width: '100%', height: '100%'}}
         />
       </TouchableOpacity>
-    ) : (<Text>No one connected</Text>)
+    ) : (
+      <Text>No one connected</Text>
+    );
   };
 
   videoView = () => {
@@ -267,16 +313,17 @@ class App extends Component {
             apiKey={this.apiKey}
             sessionId={this.sessionId}
             token={this.token}
-            eventHandlers={this.sessionEventHandlers}>
+            eventHandlers={this.sessionEventHandlers}
+            options={{enableStereoOutput: true}}>
             <OTPublisher
               properties={this.publisherProperties}
               eventHandlers={this.publisherEventHandlers}
               style={styles.publisherStyle}
             />
-            <OTSubscriber style={{ height: dimensions.height, width: dimensions.width }}
+            <OTSubscriber
+              style={{height: dimensions.height, width: dimensions.width}}
               eventHandlers={this.subscriberEventHandlers}
-              streamProperties={this.state.streamProperties}
-            >
+              streamProperties={this.state.streamProperties}>
               {this.renderSubscribers}
             </OTSubscriber>
           </OTSession>

@@ -10,9 +10,9 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "opentok-react-native": "git+https://github.com/opentok/opentok-react-native.git#0.15.0",
+    "opentok-react-native": "^0.15.0",
     "react": "16.13.1",
-    "react-native": "^0.63.2",
+    "react-native": "^0.63.4",
     "react-native-vector-icons": "^7.0.0"
   },
   "devDependencies": {
@@ -22,6 +22,7 @@
     "babel-jest": "25.5.1",
     "eslint": "6.8.0",
     "jest": "25.5.4",
+    "jetifier": "^1.6.6",
     "metro-react-native-babel-preset": "0.59.0",
     "react-test-renderer": "16.13.1"
   },
